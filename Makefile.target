@@ -162,6 +162,7 @@ obj-y += memory.o
 obj-y += memory_mapping.o
 obj-y += migration/ram.o
 LIBS := $(libs_softmmu) $(LIBS)
+LIBS-$(CONFIG_QEMU_NYX) += -lexecinfo
 
 # Hardware support
 ifeq ($(TARGET_NAME), sparc64)
