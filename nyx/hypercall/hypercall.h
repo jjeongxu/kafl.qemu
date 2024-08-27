@@ -144,6 +144,9 @@ bool handle_hypercall_kafl_hook(struct kvm_run *run,
 void handle_hypercall_kafl_mtf(struct kvm_run *run,
                                CPUState       *cpu,
                                uint64_t        hypercall_arg);
+void handle_hypercall_kafl_core_dump(struct kvm_run *run,
+                                        CPUState       *cpu,
+                                        uint64_t        hypercall_arg);
 void pt_enable_rqo(CPUState *cpu);
 void pt_disable_rqo(CPUState *cpu);
 void pt_enable_rqi(CPUState *cpu);
