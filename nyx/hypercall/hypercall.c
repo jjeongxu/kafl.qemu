@@ -806,7 +806,29 @@ err_out2:
 err_out1:
     free(host_path);
 }
+void handle_hypercall_kafl_core_dump(struct kvm_run *run,
+                                        CPUState       *cpu,
+                                        uint64_t        hypercall_arg)
+{
 
+		assert(hypercall_enabled);
+		char crashPath[256] = {0};
+		int32_t pid = (int32_t)getpid();
+		sprintf(crashPath, "/tmp/kAFL_crash_call_stack_%d",pid);
+
+		char *crash_dump_buffer = (char*)malloc(256);
+		memset(crash_dump_buffer, 0, 256);
+
+		read_virtual_memory((uint64_t)hypercall_arg, (uint8_t*)crash_dump_buffer, 256, cpu);
+
+		FILE* crash_dump_fd = fopen(crashPath, "a+b");
+		fwrite(crash_dump_buffer, strlen(crash_dump_buffer), 1, crash_dump_fd);
+		fflush(crash_dump_fd);
+		fclose(crash_dump_fd);
+		free(crash_dump_buffer);
+		// DumpHex(hprintf_buffer,256);
+
+}
 static void handle_hypercall_kafl_persist_page_past_snapshot(struct kvm_run *run,
                                                              CPUState       *cpu,
                                                              uint64_t hypercall_arg)
@@ -918,6 +940,10 @@ int handle_kafl_hypercall(struct kvm_run *run,
         break;
     case KVM_EXIT_KAFL_USER_ABORT:
         handle_hypercall_kafl_user_abort(run, cpu, arg);
+        ret = 0;
+        break;
+    case KVM_EXIT_KAFL_CORE_DUMP:
+        handle_hypercall_kafl_core_dump(run, cpu, arg);
         ret = 0;
         break;
     case KVM_EXIT_KAFL_NESTED_CONFIG:
