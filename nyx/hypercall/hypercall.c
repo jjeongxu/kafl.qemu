@@ -760,7 +760,8 @@ static void handle_hypercall_kafl_dump_file(struct kvm_run *run,
         }
     } else {
         if (file_obj.append) {
-            f = fopen(host_path, "a+");
+            f = remove(host_path);
+            goto err_out1;
         } else {
             f = fopen(host_path, "w+");
         }
