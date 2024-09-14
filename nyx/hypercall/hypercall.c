@@ -750,8 +750,14 @@ static void handle_hypercall_kafl_dump_file(struct kvm_run *run,
     assert(asprintf(&host_path, "%s/dump/%s", GET_GLOBAL_STATE()->workdir_path,
                     base_name) != -1);
 
+    if(file_obj.append){
+        remove(host_path);
+        goto err_out1;
+    }
+
     // check if base_name is mkstemp() pattern, otherwise write/append to exact name
     char *pattern = strstr(base_name, "XXXXXX");
+    /*
     if (pattern) {
         unsigned suffix = strlen(pattern) - strlen("XXXXXX");
         f               = fdopen(mkstemps(host_path, suffix), "w+");
@@ -766,6 +772,8 @@ static void handle_hypercall_kafl_dump_file(struct kvm_run *run,
             f = fopen(host_path, "w+");
         }
     }
+    */
+    f = fopen(host_path, "w+");
 
     if (!f) {
         nyx_error("%s: %s - %s\n", __func__, host_path, strerror(errno));
