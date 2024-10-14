@@ -747,12 +747,31 @@ static void handle_hypercall_kafl_dump_file(struct kvm_run *run,
     }
 
     char *base_name = basename(filename); // clobbers the filename buffer!
-    assert(asprintf(&host_path, "%s/dump/%s", GET_GLOBAL_STATE()->workdir_path,
-                    base_name) != -1);
+    
 
-    if(file_obj.append){
-        remove(host_path);
-        goto err_out1;
+    if(file_obj.append == 2){ // AfdSetInformation
+        assert(asprintf(&host_path, "/home/dltkrgksmf/AfdDump/AfdSetInformation/%s",
+                    base_name) != -1);
+    }
+
+    if(file_obj.append == 3){ // AfdGetContext
+        assert(asprintf(&host_path, "/home/dltkrgksmf/AfdDump/AfdSetContext/%s",
+                    base_name) != -1);
+    }
+
+    if(file_obj.append == 4){ // AfdGetInformation
+        assert(asprintf(&host_path, "/home/dltkrgksmf/AfdDump/AfdGetInformation/%s",
+                    base_name) != -1);
+    }
+
+    if(file_obj.append == 5){ // AfdAddressListQuery
+        assert(asprintf(&host_path, "/home/dltkrgksmf/AfdDump/AfdAddressListQuery/%s",
+                    base_name) != -1);
+    }
+
+    if(file_obj.append == 6){ // AfdNotifySock
+        assert(asprintf(&host_path, "/home/dltkrgksmf/AfdDump/AfdNotifySock/%s",
+                    base_name) != -1);
     }
 
     // check if base_name is mkstemp() pattern, otherwise write/append to exact name
